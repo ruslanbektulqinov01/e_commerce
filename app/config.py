@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     MAIL_PORT: int = int(os.getenv("MAIL_PORT", 587))
     MAIL_SERVER: str = os.getenv("MAIL_SERVER")
     MAIL_FROM_NAME: str = os.getenv("MAIL_FROM_NAME", "FastAPI Project")
+    MAIL_STARTTLS: bool = bool(os.getenv("MAIL_STARTTLS", True))
+    MAIL_SSL_TLS: bool = bool(os.getenv("MAIL_SSL_TLS", False))
 
     class Config:
         case_sensitive = True
