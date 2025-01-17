@@ -4,6 +4,9 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+from app.models.user import Base as userBase
+from app.models.product import Base as productBase
+from app.models.order import Base as orderBase
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -17,8 +20,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = [orderBase.metadata, userBase.metadata, productBase.metadata] # Set target_metadata to your Base model's metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
