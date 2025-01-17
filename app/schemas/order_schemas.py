@@ -1,6 +1,7 @@
-from pydantic import BaseModel
-from typing import List, Optional
+from pydantic import BaseModel, Field
+from typing import List
 from datetime import datetime
+from dataclasses import dataclass, field
 
 class OrderItemSchema(BaseModel):
     product_id: int
@@ -21,7 +22,7 @@ class OrderOutSchema(BaseModel):
     user_id: int
     created_at: datetime
     status: str
-    items: List[OrderItemOutSchema] = []
+    items: List[OrderItemOutSchema] = field(default_factory=list)
 
     class Config:
         orm_mode = True
