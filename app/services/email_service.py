@@ -18,15 +18,17 @@ conf = ConnectionConfig(
     MAIL_SSL_TLS=settings.MAIL_SSL_TLS,
 )
 
+
 async def send_email(subject: str, email_to: List[EmailStr], body: str):
     message = MessageSchema(
         subject=subject,
         recipients=email_to,  # List of email recipients
         body=body,
-        subtype=MessageType.html
+        subtype=MessageType.html,
     )
     fm = FastMail(conf)
     await fm.send_message(message)
+
 
 async def send_verification_email(email_to: EmailStr, verify_token: str):
     subject = "Verify your email"
@@ -37,6 +39,7 @@ async def send_verification_email(email_to: EmailStr, verify_token: str):
     <a href="{verification_link}">Verify Email</a>
     """
     await send_email(subject, [email_to], body)
+
 
 async def send_forgot_password_email(email_to: EmailStr, reset_token: str):
     subject = "Reset your password"

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, Float, Boolean
 from app.db import Base
 
+
 class Product(Base):
     __tablename__ = "products"
 

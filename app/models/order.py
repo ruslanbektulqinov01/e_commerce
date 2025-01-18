@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 from sqlalchemy import DateTime
 from app.db import Base
 
+
 class Order(Base):
     __tablename__ = "orders"
 
@@ -14,6 +15,7 @@ class Order(Base):
     total_price = Column(Float, nullable=False)
     # One-to-many relationship
     items = relationship("OrderItem", back_populates="order")
+
 
 class OrderItem(Base):
     __tablename__ = "order_items"
