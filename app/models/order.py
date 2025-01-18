@@ -1,9 +1,8 @@
 from sqlalchemy import Column, Integer, ForeignKey, Float, String
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy import DateTime
-
-Base = declarative_base()
+from app.db import Base
 
 class Order(Base):
     __tablename__ = "orders"
@@ -12,7 +11,7 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     status = Column(String, default="pending")  # (pending, completed, canceled, etc.)
-
+    total_price = Column(Float, nullable=False)
     # One-to-many relationship
     items = relationship("OrderItem", back_populates="order")
 
@@ -26,3 +25,4 @@ class OrderItem(Base):
     price = Column(Float, nullable=False)
 
     order = relationship("Order", back_populates="items")
+    product = relationship("Product")

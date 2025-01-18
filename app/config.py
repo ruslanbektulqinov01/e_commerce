@@ -1,6 +1,6 @@
 import os
-from pydantic import BaseSettings
 from dotenv import load_dotenv
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()  # .env faylidan environment variable-larni yuklab olamiz
 
@@ -23,9 +23,7 @@ class Settings(BaseSettings):
     MAIL_FROM_NAME: str = os.getenv("MAIL_FROM_NAME", "FastAPI Project")
     MAIL_STARTTLS: bool = bool(os.getenv("MAIL_STARTTLS", True))
     MAIL_SSL_TLS: bool = bool(os.getenv("MAIL_SSL_TLS", False))
-
-    class Config:
-        case_sensitive = True
+    model_config = SettingsConfigDict(case_sensitive=True)
 
 
 settings = Settings()

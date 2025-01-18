@@ -8,15 +8,9 @@ from app.models.user import User
 from app.schemas.product_schemas import (
     ProductCreateSchema, ProductUpdateSchema, ProductOutSchema
 )
-from app.services.security import decode_access_token
+from app.services.security import get_current_user
 
 products_router = APIRouter(prefix="/api/products", tags=["Products"])
-
-async def get_current_user(token: str = Depends()):
-    payload = decode_access_token(token)
-    if payload is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return payload.get("sub")  # user email
 
 @products_router.get("/", response_model=List[ProductOutSchema])
 async def get_products(session: AsyncSession = Depends(get_async_session)):

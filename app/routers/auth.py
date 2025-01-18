@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db import get_async_session
@@ -18,10 +19,10 @@ auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @auth_router.post("/register/", response_model=TokenSchema)
 async def register_user(
-        user_data: UserRegisterSchema,
-        session: AsyncSession = Depends(get_async_session)
+    user_data: UserRegisterSchema,
+    session: AsyncSession = Depends(get_async_session)
 ):
-    # Email mavjud emasligini tekshiramiz
+    # 1) Email bandligini tekshirish
     existing_user = await session.execute(
         select(User).where(User.email == user_data.email)
     )
@@ -31,56 +32,57 @@ async def register_user(
             detail="Email already registered"
         )
 
-    # Parolni xeshlash
+    # 2) Parolni xeshlash
     hashed_password = get_password_hash(user_data.password)
 
-    # Foydalanuvchi yaratish
+    # 3) Yangi foydalanuvchini yaratish
     new_user = User(
         email=user_data.email,
         hashed_password=hashed_password,
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
+        is_superuser=user_data.is_superuser,
         is_active=True,
-        is_verified=False,
-        is_superuser=False
+        is_verified=False
     )
     session.add(new_user)
     await session.commit()
     await session.refresh(new_user)
 
-    # Email verify token yaratish
-    verify_token = create_access_token({"sub": new_user.email}, expires_delta=60 * 60)  # 1 soatga
+    # 4) Email verifikatsiya tokeni
+    verify_token = create_access_token({"sub": new_user.email}, expires_delta=60 * 60)
 
-    # Email yuborish (async)
+    # 5) Email yuborish
     await send_verification_email(new_user.email, verify_token)
 
-    # Dastlabki login token qaytaramiz (ixtiyoriy, yoki 'None' qilishingiz mumkin)
+    # 6) Ro‘yxatdan o‘tgan userga access_token qaytarish (ixtiyoriy)
     access_token = create_access_token({"sub": new_user.email})
     return TokenSchema(access_token=access_token)
-
-
-@auth_router.post("/login/", response_model=TokenSchema)
+@auth_router.post("/login", response_model=TokenSchema)
 async def login_user(
-        user_data: UserLoginSchema,
-        session: AsyncSession = Depends(get_async_session)
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    session: AsyncSession = Depends(get_async_session)
 ):
+    # Bu yerda `form_data.username` -> email sifatida qabul qilinadi
+    email = form_data.username
+    password = form_data.password
+
     result = await session.execute(
-        select(User).where(User.email == user_data.email)
+        select(User).where(User.email == email)
     )
-    user_row = result.first()
-    if not user_row:
-        raise HTTPException(status_code=400, detail="Invalid credentials")
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid email or password")
 
-    user = User(**dict(user_row))
-
-    if not verify_password(user_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Invalid credentials")
+    if not verify_password(password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Invalid email or password")
 
     if not user.is_verified:
-        raise HTTPException(status_code=403, detail="User email is not verified")
+        raise HTTPException(status_code=403, detail="User not verified")
 
+    # Token yaratish
     access_token = create_access_token({"sub": user.email})
     return TokenSchema(access_token=access_token)
-
-
 @auth_router.get("/verify-email/")
 async def verify_email(token: str = Query(...), session: AsyncSession = Depends(get_async_session)):
     payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
@@ -93,37 +95,34 @@ async def verify_email(token: str = Query(...), session: AsyncSession = Depends(
         select(User).where(User.email == email)
     )
 
-    user_row = result.first()
-    if not user_row:
+    user = result.scalar_one_or_none()
+    if not user:
         raise HTTPException(status_code=400, detail="User not found")
 
-    user = User(**dict(user_row))
     user.is_verified = True
     session.add(user)
     await session.commit()
     return {"message": "Email verified successfully"}
 
+@auth_router.get("/verify-email/")
+async def verify_email(token: str = Query(...), session: AsyncSession = Depends(get_async_session)):
+    payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+    email = payload.get("sub")
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid token")
 
-@auth_router.post("/resend-verification/")
-async def resend_verification(
-        data: ResendVerificationSchema,
-        session: AsyncSession = Depends(get_async_session)
-):
+    # Retrieve the user
     result = await session.execute(
-        select(User).where(User.email == data.email)
+        select(User).where(User.email == email)
     )
-    user_row = result.first()
-    if not user_row:
+    user = result.scalar_one_or_none()
+    if not user:
         raise HTTPException(status_code=400, detail="User not found")
 
-    user = User(**dict(user_row))
-    if user.is_verified:
-        raise HTTPException(status_code=400, detail="Email already verified")
-
-    verify_token = create_access_token({"sub": user.email}, expires_delta=60 * 60)
-    await send_verification_email(user.email, verify_token)
-    return {"message": "Verification email resent"}
-
+    user.is_verified = True
+    session.add(user)
+    await session.commit()
+    return {"message": "Email verified successfully"}
 
 @auth_router.post("/forgot-password/")
 async def forgot_password(

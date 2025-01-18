@@ -1,18 +1,23 @@
+from typing import Optional
+
 from pydantic import BaseModel, EmailStr
 
 class UserLoginSchema(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 class UserRegisterSchema(BaseModel):
-    email: EmailStr
+    email: str
     password: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    is_superuser: bool = False
 
 class ResendVerificationSchema(BaseModel):
-    email: EmailStr
+    email: str
 
 class ForgotPasswordSchema(BaseModel):
-    email: EmailStr
+    email: str
 
 class ResetPasswordSchema(BaseModel):
     token: str

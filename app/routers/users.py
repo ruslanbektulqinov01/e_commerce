@@ -5,15 +5,9 @@ from app.db import get_async_session
 from app.models.user import User
 from app.schemas.user_schemas import UserOutSchema, UserUpdateSchema
 from app.services.security import decode_access_token, get_password_hash
-
+from app.services.security import get_current_user
 users_router = APIRouter(prefix="/users", tags=["Users"])
 
-
-async def get_current_user(token: str = Depends()):
-    payload = decode_access_token(token)
-    if payload is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return payload.get("sub")  # email address
 
 
 @users_router.get("/me", response_model=UserOutSchema)
