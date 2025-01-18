@@ -1,27 +1,21 @@
-from sqlalchemy.ext.asyncio import (
-    AsyncEngine,
-    create_async_engine,
-    async_sessionmaker,
-    AsyncSession,
-)
-from app.config import DATABASE_URL
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import declarative_base
+from app.config import DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME, USE_SQLITE_IN_MEMORY
 
 Base = declarative_base()
 
-# Asinxron SQLAlchemy engine yaratish
-engine: AsyncEngine = create_async_engine(
-    DATABASE_URL,
-    echo=True,  # ish jarayonini console da ko'rish uchun, xohlasa false qilinadi
-)
+if USE_SQLITE_IN_MEMORY:
+    DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+else:
+    # PostgreSQL misoli
+    DATABASE_URL = (
+        f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
 
-# Asinxron session factory
-async_session_maker = async_sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
-)
+engine = create_async_engine(DATABASE_URL, echo=False)
+SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 
-# Dependency sifatida ishlatiladi
 async def get_async_session() -> AsyncSession:
-    async with async_session_maker() as session:
+    async with SessionLocal() as session:
         yield session

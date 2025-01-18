@@ -1,33 +1,29 @@
 import os
 from dotenv import load_dotenv
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import SettingsConfigDict
 
 load_dotenv()  # .env faylidan environment variable-larni yuklab olamiz
 
+# Bu misolda eng zarur sozlamalar
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = os.getenv("DB_PORT", "5432")
+DB_NAME = os.getenv("DB_NAME", "test_db")
+DB_USER = os.getenv("DB_USER", "test_user")
+DB_PASS = os.getenv("DB_PASS", "test_pass")
 
-class Settings(BaseSettings):
-    DB_HOST: str = os.getenv("DB_HOST")
-    DB_PORT: str = os.getenv("DB_PORT")
-    DB_NAME: str = os.getenv("DB_NAME")
-    DB_USER: str = os.getenv("DB_USER")
-    DB_PASS: str = os.getenv("DB_PASS")
+# Agar sqlite ishlatmoqchi bo'lsangiz, shunday qiling:
+USE_SQLITE_IN_MEMORY = os.getenv("USE_SQLITE_IN_MEMORY", "true").lower() == "true"
 
-    JWT_SECRET: str = os.getenv("JWT_SECRET")
-    JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM")
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
+JWT_SECRET = os.getenv("JWT_SECRET", "SUPER_SECRET")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
-    MAIL_USERNAME: str = os.getenv("MAIL_USERNAME")
-    MAIL_PASSWORD: str = os.getenv("MAIL_PASSWORD")
-    MAIL_FROM: str = os.getenv("MAIL_FROM")
-    MAIL_PORT: int = int(os.getenv("MAIL_PORT", 587))
-    MAIL_SERVER: str = os.getenv("MAIL_SERVER")
-    MAIL_FROM_NAME: str = os.getenv("MAIL_FROM_NAME", "FastAPI Project")
-    MAIL_STARTTLS: bool = bool(os.getenv("MAIL_STARTTLS", True))
-    MAIL_SSL_TLS: bool = bool(os.getenv("MAIL_SSL_TLS", False))
-    model_config = SettingsConfigDict(case_sensitive=True)
-
-
-settings = Settings()
-
-# PostgreSQL uchun DSN (Database URL):
-DATABASE_URL = f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASS}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+MAIL_USERNAME = os.getenv("MAIL_USERNAME", "example@gmail.com")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "app-password")
+MAIL_FROM = os.getenv("MAIL_FROM", "example@gmail.com")
+MAIL_PORT = int(os.getenv("MAIL_PORT", "587"))
+MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+MAIL_FROM_NAME = os.getenv("MAIL_FROM_NAME", "FastAPI Project")
+MAIL_STARTTLS = True
+MAIL_SSL_TLS = False
+model_config = SettingsConfigDict(case_sensitive=True)

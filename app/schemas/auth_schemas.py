@@ -1,11 +1,5 @@
 from typing import Optional
-
-from pydantic import BaseModel, EmailStr
-
-
-class UserLoginSchema(BaseModel):
-    email: str
-    password: str
+from pydantic import BaseModel
 
 
 class UserRegisterSchema(BaseModel):
@@ -14,10 +8,6 @@ class UserRegisterSchema(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     is_superuser: bool = False
-
-
-class ResendVerificationSchema(BaseModel):
-    email: str
 
 
 class ForgotPasswordSchema(BaseModel):

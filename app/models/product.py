@@ -10,3 +10,4 @@ class Product(Base):
     description = Column(Text, nullable=True)
     price = Column(Float, nullable=False, default=0.0)
     is_active = Column(Boolean, default=True)
+    # quantity = Column(Integer, default=0)

@@ -4,7 +4,9 @@ from app.routers.users import users_router
 from app.routers.products import products_router
 from app.routers.orders import orders_router
 
-app = FastAPI(title="My FastAPI Project")
+from app.db import engine, Base, USE_SQLITE_IN_MEMORY
+
+app = FastAPI(title="Controller-based E-commerce")
 
 # Routerlarni ulash
 app.include_router(auth_router)
@@ -13,7 +15,14 @@ app.include_router(products_router)
 app.include_router(orders_router)
 
 
-# Root endpoint (Hello world)
+@app.on_event("startup")
+async def startup_event():
+    # Agar sqlite in-memory bo'lsa, dastur startida jadvallar yaratiladi
+    if USE_SQLITE_IN_MEMORY:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+
+
 @app.get("/")
 async def root():
-    return {"message": "Hello, FastAPI!"}
+    return {"message": "Hello, FastAPI with Controllers!"}
