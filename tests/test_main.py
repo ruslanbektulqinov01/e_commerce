@@ -1,3 +1,5 @@
+from time import sleep
+
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
@@ -117,10 +119,11 @@ def test_create_product_without_auth(test_product_data):
     ), "Expected 'Not authenticated' detail message"
 
 
+
 @pytest.mark.asyncio
 async def test_create_product_with_auth(auth_token, test_product_data):
     transport = ASGITransport(app=app)
-
+    sleep(5)  # test uchun
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         headers = {"Authorization": f"Bearer {auth_token}"}
 
