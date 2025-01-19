@@ -1,8 +1,8 @@
-"""lazy raise
+""""all migrations"
 
-Revision ID: 862e3180b923
-Revises: 99cf965f2a5c
-Create Date: 2025-01-18 11:42:34.108777
+Revision ID: 22441c1d616c
+Revises: 501ca5d997a2
+Create Date: 2025-01-19 10:39:48.353523
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "862e3180b923"
-down_revision: Union[str, None] = "99cf965f2a5c"
+revision: str = "22441c1d616c"
+down_revision: Union[str, None] = "501ca5d997a2"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

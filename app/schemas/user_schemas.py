@@ -22,3 +22,7 @@ class UserUpdateSchema(BaseModel):
     is_active: Optional[bool] = None
     is_verified: Optional[bool] = None
     is_superuser: Optional[bool] = None
+
+
+class UserCreateSchema:
+    pass

@@ -4,15 +4,13 @@ from pydantic_settings import SettingsConfigDict
 
 load_dotenv()  # .env faylidan environment variable-larni yuklab olamiz
 
-# Bu misolda eng zarur sozlamalar
+# Bu yerda eng zarur sozlamalar
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "5432")
 DB_NAME = os.getenv("DB_NAME", "test_db")
 DB_USER = os.getenv("DB_USER", "test_user")
 DB_PASS = os.getenv("DB_PASS", "test_pass")
 
-# Agar sqlite ishlatmoqchi bo'lsangiz, shunday qiling:
-USE_SQLITE_IN_MEMORY = os.getenv("USE_SQLITE_IN_MEMORY", "true").lower() == "true"
 
 JWT_SECRET = os.getenv("JWT_SECRET", "SUPER_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")

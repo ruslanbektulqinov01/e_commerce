@@ -37,10 +37,16 @@ async def create_order_logic(
             raise HTTPException(
                 status_code=404, detail=f"Product {item.product_id} not found"
             )
+        if product.quantity < item.quantity:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Insufficient quantity for product {item.product_id}",
+            )
 
-        line_total = product.price * item.quantity
-        total_price += line_total
-
+        # Update product quantity
+        product.quantity -= item.quantity
+        total_price += item.quantity * product.price
+        session.add(product)
         # OrderItem
         order_item = OrderItem(
             order_id=new_order.id,
@@ -50,7 +56,6 @@ async def create_order_logic(
         )
         session.add(order_item)
 
-    # 3) total_price yangilab, flush
     new_order.total_price = total_price
     await session.flush()
 

@@ -19,6 +19,7 @@ async def create_product_logic(
         name=data.name,
         description=data.description,
         price=data.price,
+        quantity=data.quantity,
         is_active=data.is_active,
     )
     session.add(new_product)
@@ -41,7 +42,7 @@ async def update_product_logic(
     if data.price is not None:
         product.price = data.price
     if data.is_active is not None:
-        product.is_active = data.is_active
+        product.quantity = data.quantity
 
     session.add(product)
     await session.commit()
