@@ -16,9 +16,9 @@ jobs:
       db:
         image: postgres:16
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ecommerce_db
+          POSTGRES_USER: fastapi_user
+          POSTGRES_PASSWORD: fastapi_pass
+          POSTGRES_DB: fastapi_db
         ports:
           - 5432:5432
         options: >-
