@@ -67,8 +67,5 @@ jobs:
         alembic upgrade head
 
     - name: Run Tests
-      env:
-        DATABASE_URL: postgresql+asyncpg://fastapi_user:fastapi_pass@localhost:5432/fastapi_db
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         pytest .
