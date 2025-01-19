@@ -52,11 +52,6 @@ jobs:
     - name: Install psql client
       run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
-    - name: Create test_user in Postgres
-      run: |
-        PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h localhost -p 5432 -U fastapi_user -d fastapi_db -c "CREATE USER test_user WITH PASSWORD 'test_pass';"
-        PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} psql -h localhost -p 5432 -U fastapi_user -d fastapi_db -c "GRANT ALL PRIVILEGES ON DATABASE fastapi_db TO test_user;"
-
     - name: Wait for Postgres
       run: |
         for i in {1..10}; do
