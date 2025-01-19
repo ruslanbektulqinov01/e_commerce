@@ -17,7 +17,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: fastapi_user
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PASSWORD: fastapi_pass
           POSTGRES_DB: fastapi_db
         ports:
           - 5432:5432
