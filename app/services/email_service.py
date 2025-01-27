@@ -34,22 +34,22 @@ async def send_email(subject: str, email_to: List[str], body: str):
 
 
 async def send_verification_email(email_to: str, verify_token: str):
-    subject = "Verify your email"
+    subject = "Emailingizni tasdiqlang"
     verification_link = f"http://localhost:8000/auth/verify-email?token={verify_token}"
     body = f"""
-    <h1>Email Verification</h1>
-    <p>Please click the link below to verify your email:</p>
-    <a href="{verification_link}">Verify Email</a>
+    <h1>Emailni tasdiqlash</h1>
+    <p>Iltimos, emailingizni tasdiqlash uchun quyidagi havolani bosing:</p>
+    <a href="{verification_link}">Emailni tasdiqlash</a>
     """
     await send_email(subject, [email_to], body)
 
 
 async def send_forgot_password_email(email_to: str, reset_token: str):
-    subject = "Reset your password"
+    subject = "Parolingizni tiklang"
     reset_link = f"http://localhost:8000/auth/reset-password?token={reset_token}"
     body = f"""
-    <h1>Reset Password</h1>
-    <p>Please click the link below to reset your password:</p>
-    <a href="{reset_link}">Reset Password</a>
+    <h1>Parolni tiklash</h1>
+    <p>Iltimos, parolingizni tiklash uchun quyidagi havolani bosing:</p>
+    <a href="{reset_link}">Parolni tiklash</a>
     """
     await send_email(subject, [email_to], body)
